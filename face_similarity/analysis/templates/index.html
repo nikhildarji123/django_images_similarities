@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .image-preview img {
+            max-width: 300px;
+            margin-right: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .similarity-scores {
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Compare Two Faces</h1>
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="image1">Select First Image:</label><br>
+        <input type="file" id="image1" name="image1" accept="image/*" required><br><br>
+
+        <label for="image2">Select Second Image:</label><br>
+        <input type="file" id="image2" name="image2" accept="image/*" required><br><br>
+
+        <button type="submit">Compare Faces</button>
+    </form>
+
+    {% if similarity_scores %}
+    <div class="results">
+        <h2>Comparison Results</h2>
+        <div class="similarity-scores">
+            <h3>Similarity Scores:</h3>
+            <ul>
+                {% for feature, score in similarity_scores.items %}
+                <li><strong>{{ feature|capfirst }}</strong>: {{ score }}%</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="image-preview">
+            <h3>Annotated Images:</h3>
+            <img src="{{ annotated_images.image1 }}" alt="Annotated Image 1">
+            <img src="{{ annotated_images.image2 }}" alt="Annotated Image 2">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="error">
+        <p>Error: {{ error }}</p>
+    </div>
+    {% endif %}
+</body>
+</html>
